@@ -1,0 +1,242 @@
+\documentclass[letterpaper,11pt,twoside]{evo_cv}
+%\usepackage{hyperref}
+
+\usepackage[backend=biber,style=apa,natbib=false,maxbibnames=99]{biblatex}
+\renewcommand*{\bibfont}{\small}
+
+
+\nameTitle{} % Your Title Dr., Prof., etc 
+\firstName{Firstname} % Your First Name and Middle Name or initial where applicable
+\lastName{Lastname} % Your Last Name
+\nameSuffix{PhD} % Your suffix MD, PhD, Esq
+\profession{MyProfession} % Your preferred title
+\address{1000 New Street Ave. Old City, NY 10000} %Your address
+\mobile{(000) 000 0000} %Your phone 
+\emailaddress{firstnamelastname@email.com} %Your email
+\addbibresource{MyPublications.bib}
+
+% Full links have to be defined separately for the footer, if you change the platform make sure use the right font awesome for the footnote. This part needs a little more work.
+
+\social[linkedin]{firstnamelastname}
+\socialOne{\faLinkedinIn}{https://www.linkedin.com/in/firstnamelastname}
+\social[github]{myGithub}
+\socialTwo{\faGithub}{https://www.github.com/myGithub}
+
+
+\begin{document}
+\makecvtitle
+\vspace*{-10mm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\textsc{Professional Summary}}
+\cvsummary{Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\textsc{Experience}}
+  \cvexperience
+    {Jan 2024--present}
+    {Position 3}
+    {Company 3}
+    {City 3, NY}
+    {
+      {
+        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
+	  \item Did that awesome thing.
+	  \item Worked on some amazing project.
+        \end{itemize}
+      }
+    }
+
+  \cvexperience
+    {Jul 2020--Jan 2024}
+    {Position 2}
+    {Company 2}
+    {City 2, CA}
+    {
+      {
+        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
+	  \item Did that awesome thing.
+	  \item Worked on some amazing project.
+        \end{itemize}
+      }
+    }
+
+  \cvexperience
+    {May 2014--Jul 2020}
+    {Position 1}
+    {Company 1}
+    {City 1, CA}
+    {
+      {
+        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
+	  \item Did that awesome thing.
+	  \item Worked on some amazing project.
+        \end{itemize}
+      }
+    }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\textsc{Education}}
+  \cveducation
+    {2025}
+    {PhD in XXXX}
+    {Some Awesome University}
+    {Another City, MO}
+    {
+      {
+        \begin{itemize}[leftmargin=0.6cm, label={}, before=\vspace{-1pt}, after=\vspace{3pt}]
+	  \item {\sffamily\sbseries{Concentration:}} My awesome field; {\sffamily\sbseries{Certification:}} A cool program at my school
+        \end{itemize}
+      }
+    }
+
+  \cveducation
+    {2023}
+    {MS in XXXX}
+    {Another Awesome University}
+    {Some City, TX}
+    {
+      {
+        \begin{itemize}[leftmargin=0.6cm, label={}, before=\vspace{-1pt}, after=\vspace{3pt}]
+	  \item {\sffamily\sbseries{Concentration:}} My awesome field
+        \end{itemize}
+      }
+    }
+
+  \cveducation
+    {2021}
+    {BS in XXXXX}
+    {Cool University}
+    {New City, PR}
+    {
+      {
+        \begin{itemize}[leftmargin=0.6cm, label={}, before=\vspace{-1pt}, after=\vspace{3pt}]
+	  \item {\sffamily\sbseries{Certificate:}} A cool thing I did
+        \end{itemize}
+      }
+    }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\textsc{Skills}}
+  \cvskilllist
+    {Skill Group One}
+    {Skill11, Skill12, Skill13, Skill14}
+
+  \cvskilllist
+    {Skill Group Two}
+    {Skill21, Skill22, Skill23, Skill24, Skill25}
+    
+  \cvskilllist
+    {Skill Group Three}
+    {Skill31, Skill32, Skill33}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\nocite{*}{ \printbibliography[title={\textsc{Publications}}] }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\textsc{Honors and Awards}}
+
+  \cvhonors
+    {2024}
+    {Honor1}
+    {Organization1}
+    {City, OH}
+
+  \cvhonors
+    {2020}
+    {Honor2}
+    {COVID19}
+    {City, NH}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\textsc{Professional Memberships} }
+
+  \cvmembership
+    {2023--present}
+    {Membership1}
+
+  \cvmembership
+    {2018--present}
+    {Membership2}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{\textsc{Selected Presentations}}
+
+  \cvtalk
+    {Oct 2023}
+    {Presentation1}
+    {Conference1}
+    {Placeholder City, IL}
+    {Poster}
+
+  \cvtalk 
+    {Jun 2020}
+    {Presentation2}
+    {Virtual Conference 2020}
+    {Online} 
+    {Talk}
+
+\section{\textsc{Outreach and leadership activities} }
+
+  \cvoutreach
+    {2021--present}
+    {Awesome Outreach Position}
+    {Somewhere in the universe}
+    {
+      {
+        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
+	  \item Did that awesome thing.
+	  \item Worked on some amazing project.
+	\end{itemize}
+      }
+    }
+
+  \cvoutreach
+    {2019--2021}
+    {Another Awesome Outreach Position}
+    {Online}
+    {
+      {
+        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
+	  \item Did that awesome thing.
+	  \item Worked on some amazing project.
+	\end{itemize}
+      }
+    }
+
+
+\section{\textsc{Hobbies}}
+
+  \cvhobby
+    {2023--present}
+    {My hobby 1}
+    {
+      {
+        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
+          \item Some accomplishment with the hobby.
+        \end{itemize}
+      }
+    }
+
+  \cvhobby
+    {2013--present}
+    {My hobby 2}
+    {
+      {
+        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
+          \item Some accomplishment with the hobby.
+        \end{itemize}
+      }
+    }
+
+\end{document}
