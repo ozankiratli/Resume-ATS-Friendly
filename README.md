@@ -8,4 +8,4 @@ I had two goals in mind: make it readable by the ATS systems and make it look mo
 
 Feel free to use and edit for your own use.
 
-If you have any issues feel free to submit a ticket, I'll look into it. 
+If you have any issues and feature requests feel free to submit a ticket, I'll look into it.
