@@ -1,3 +1,6 @@
+## Archival Directory
+Archive/*
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
@@ -11,6 +14,7 @@
 *.cb
 *.cb2
 .*.lb
+*.tmp
 
 ## Intermediate documents:
 *.dvi
@@ -42,7 +46,7 @@
 
 ## Build tool directories for auxiliary files
 # latexrun
-latex.out/
+latex.out/@
 
 ## Auxiliary and intermediate files from other packages:
 # algorithms

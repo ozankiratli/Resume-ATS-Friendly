@@ -1,51 +1,41 @@
-\documentclass[letterpaper,11pt,twoside]{evo_cv}
+\documentclass[letterpaper,11pt,twoside]{drevocv}
 
-\usepackage[backend=biber,style=apa,natbib=false,maxbibnames=99]{biblatex}
-\renewcommand*{\bibfont}{\small}
-
-
-\nameTitle{} % Your Title Dr., Prof., etc 
-\firstName{Firstname} % Your First Name and Middle Name or initial where applicable
-\lastName{Lastname} % Your Last Name
-\nameSuffix{PhD} % Your suffix MD, PhD, Esq
-\profession{MyProfession} % Your preferred title
-\address{1000 New Street Ave. Old City, NY 10000} %Your address
-\mobile{(000) 000 0000} %Your phone 
-\emailaddress{firstnamelastname@email.com} %Your email
 \addbibresource{MyPublications.bib}
 
-% Full links have to be defined separately for the footer, if you change the platform make sure use the right font awesome for the footnote. This part needs a little more work.
+\nameprefix{Dr.} % Your Title Dr., Prof., etc 
+\firstname{Firstname} % Your First Name and 
+\middlename{Middle M.} %Middle Name or initial where applicable
+\lastname{Lastname} % Your Last Name
+\namesuffix{PhD} % Your suffix MD, PhD, Esq
+\title{\textsc{My Profession}} % Your preferred title or profession
+\address{Old City, NY} %Your address as city and state
+\mobile{(000) 000 0000} %Your phone 
+\email{myemail@email.com} %Your email
 
-\social[linkedin]{firstnamelastname}
-\socialOne{\faLinkedinIn}{https://www.linkedin.com/in/firstnamelastname}
-\social[github]{myGithub}
-\socialTwo{\faGithub}{https://www.github.com/myGithub}
 
+\linkedin{firstnamelastname}
+\github{myGithub}
 
 \begin{document}
-\makecvtitle
-\vspace*{-10mm}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\textsc{Professional Summary}}
-\cvsummary{Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit.}
+\begin{cvsection}{Professional Summary}
+  \cvsummary{Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit.}
+\end{cvsection}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\textsc{Experience}}
+\begin{cvsection}{Experience}
   \cvexperience
     {Jan 2024--present}
     {Position 3}
     {Company 3}
     {City 3, NY}
+    {40 hr/wk}
     {
-      {
-        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
-	  \item Did that awesome thing.
-	  \item Worked on some amazing project.
-        \end{itemize}
-      }
+	    \cvlistitem{Did that awesome thing.}
+	    \cvlistitem{Worked on some amazing project.}
     }
 
   \cvexperience
@@ -53,13 +43,10 @@
     {Position 2}
     {Company 2}
     {City 2, CA}
+    {30 hr/wk}
     {
-      {
-        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
-	  \item Did that awesome thing.
-	  \item Worked on some amazing project.
-        \end{itemize}
-      }
+	    \cvlistitem{Did that awesome thing.}
+	    \cvlistitem{Worked on some amazing project.}
     }
 
   \cvexperience
@@ -67,18 +54,16 @@
     {Position 1}
     {Company 1}
     {City 1, CA}
+    {20 hr/wk}
     {
-      {
-        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
-	  \item Did that awesome thing.
-	  \item Worked on some amazing project.
-        \end{itemize}
-      }
+	    \cvlistitem{Did that awesome thing.}
+	    \cvlistitem{Worked on some amazing project.}
     }
+\end{cvsection}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\textsc{Education}}
+\begin{cvsection}{Education}
   \cveducation
     {2025}
     {PhD in XXXX}
@@ -117,10 +102,11 @@
         \end{itemize}
       }
     }
+\end{cvsection}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\textsc{Skills}}
+\begin{cvsection}{Skills}
   \cvskilllist
     {Skill Group One}
     {Skill11, Skill12, Skill13, Skill14}
@@ -132,31 +118,37 @@
   \cvskilllist
     {Skill Group Three}
     {Skill31, Skill32, Skill33}
+\end{cvsection}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\nocite{*}{ \printbibliography[title={\textsc{Publications}}] }
+\begin{cvsection}{Selected Publications}
+\nocite{*}{\printbibliography[heading=none]}  % heading=none prevents double title
+\end{cvsection}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\textsc{Honors and Awards}}
+\begin{cvsection}{Honors and Awards}
 
   \cvhonors
     {2024}
     {Honor1}
+    {Description}
     {Organization1}
     {City, OH}
 
   \cvhonors
     {2020}
     {Honor2}
+    {} % left blank
     {COVID19}
     {City, NH}
+\end{cvsection}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\textsc{Professional Memberships} }
+\begin{cvsection}{Professional Memberships}
 
   \cvmembership
     {2023--present}
@@ -165,39 +157,37 @@
   \cvmembership
     {2018--present}
     {Membership2}
+\end{cvsection}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\textsc{Selected Presentations}}
+\begin{cvsection}{Selected Presentations}
 
   \cvtalk
     {Oct 2023}
-    {Presentation1}
+    {Presentation1 Title}
     {Conference1}
     {Placeholder City, IL}
     {Poster}
 
   \cvtalk 
     {Jun 2020}
-    {Presentation2}
+    {Presentation2 Title}
     {Virtual Conference 2020}
     {Online} 
     {Talk}
+\end{cvsection}
 
-\section{\textsc{Outreach and leadership activities} }
+\begin{cvsection}{Outreach and leadership activities} 
 
   \cvoutreach
     {2021--present}
     {Awesome Outreach Position}
     {Somewhere in the universe}
     {
-      {
-        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
-	  \item Did that awesome thing.
-	  \item Worked on some amazing project.
-	\end{itemize}
-      }
+	    \cvlistitem{Did that awesome thing.}
+	    \cvlistitem{Worked on some amazing project.}
     }
 
   \cvoutreach
@@ -205,37 +195,27 @@
     {Another Awesome Outreach Position}
     {Online}
     {
-      {
-        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
-	  \item Did that awesome thing.
-	  \item Worked on some amazing project.
-	\end{itemize}
-      }
+	    \cvlistitem{Did that awesome thing.}
+	    \cvlistitem{Worked on some amazing project.}
     }
+\end{cvsection}
 
 
-\section{\textsc{Hobbies}}
+\begin{cvsection}{Hobbies}
 
   \cvhobby
     {2023--present}
     {My hobby 1}
     {
-      {
-        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
-          \item Some accomplishment with the hobby.
-        \end{itemize}
-      }
+      \cvlistitem{Some accomplishment with the hobby.}
     }
 
   \cvhobby
     {2013--present}
     {My hobby 2}
     {
-      {
-        \begin{itemize}[leftmargin=0.6cm, label={\textbullet}, before=\vspace{-1pt}, after=\vspace{3pt}]
-          \item Some accomplishment with the hobby.
-        \end{itemize}
-      }
+      \cvlistitem{Some accomplishment with the hobby.}
     }
+\end{cvsection}
 
 \end{document}

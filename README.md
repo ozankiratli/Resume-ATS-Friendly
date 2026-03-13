@@ -1,5 +1,5 @@
 # Resume-ATS-Friendly
-ATS Friendly LaTeX Resume Template 
+ATS Friendly LaTeX Resume and Cover Template 
 
 ## Motivation
 I created this resume format using `moderncv`, but I added several new commands and specialized sections. I tried to remove the tables etc.
