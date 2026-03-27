@@ -277,6 +277,11 @@
   \@ifundefined{@namesuffix}{}{, \@namesuffix}%
 }
 
+\newcommand*{\website}[1]{%
+  %\def\@websiteurl{#1}%
+  \homepage{#1}%
+}
+
 \newcommand*{\github}[1]{%
   \social[github]{#1}% Automatically set \social as well
 }

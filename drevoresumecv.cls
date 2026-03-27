@@ -14,7 +14,7 @@
 %-------------------------------------------------------------------------------
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{drevocv}[2025/02/21 evo's custom CV class]
+\ProvidesClass{drevoresumecv}[2025/02/21 evo's custom CV class]
 
 \LoadClass[11pt, letterpaper, twoside]{moderncv}
 
@@ -53,7 +53,7 @@
 \RequirePackage{lastpage}
 \RequirePackage{tabto}
 \RequirePackage{fancyhdr}
-\RequirePackage[backend=biber,style=apa,natbib=false,maxbibnames=99]{biblatex}
+\RequirePackage[backend=biber,style=authoryear,natbib=false,maxbibnames=5,minbibnames=5]{biblatex}
 
 \pagestyle{fancy}
 
@@ -279,6 +279,68 @@
   {\endlist}
   {\item}
 
+\renewbibmacro*{issue+date}{}
+
+% Suppress date in journal position
+\renewbibmacro*{journal+issuetitle}{%
+  \usebibmacro{journal}%
+  \setunit*{\addspace}%
+  \iffieldundef{series}{}{\newunit\usebibmacro{series+number}}%
+  \setunit{\addspace}%
+  \usebibmacro{volume+number+eid}%
+  \setunit{\addspace}%
+  \newunit}
+
+\renewcommand{\mkbibnamegiven}[1]{%
+  \ifitemannotation{highlight}{\textbf{#1}}{#1}}
+\renewcommand{\mkbibnamefamily}[1]{%
+  \ifitemannotation{highlight}{\textbf{#1}}{#1}}
+
+\DeclareNameAlias{author}{family-given}
+\DeclareNameAlias{editor}{family-given}
+
+\DeclareNameAlias{author}{family-given}
+\renewcommand*{\bibinitperiod}{.\,}
+\renewcommand*{\bibinitdelim}{\,}
+
+% Force initials for given names
+\DeclareNameFormat{author}{%
+  \usebibmacro{name:family-given}
+    {\namepartfamily}
+    {\namepartgiveni}
+    {\namepartprefix}
+    {\namepartsuffix}%
+  \usebibmacro{name:andothers}}
+
+% Suppress note in body
+\AtEveryBibitem{%
+  \savefield{note}{\tempnote}%
+  \clearfield{note}}
+
+% Print saved note at end
+\renewbibmacro*{finentry}{%
+  \ifdefvoid{\tempnote}
+    {}
+    {\setunit{\addperiod\space}%
+     \printtext{\tempnote}}%
+  \finentry}
+
+
+% Remove "In:" before journal name
+\renewbibmacro{in:}{}
+
+% Suppress empty parentheses for missing year
+\DeclareFieldFormat{issue}{#1}
+\renewbibmacro*{issue+date}{%
+  \iffieldundef{year}
+    {}
+    {\printtext[parens]{\printfield{year}}}%
+  \usebibmacro{issue}}
+
+% Suppress empty volume/number
+\DeclareFieldFormat{volume}{#1}
+\DeclareFieldFormat{number}{#1}
+
 \newcommand*{\cvsummary}[2][\itemsgap]{
   {#2}
   \par\addvspace{#1}
@@ -366,7 +428,8 @@
 \newcommand*{\cvoutreach}[5][\itemsgap]{%
   \setlist[itemize]{itemsep=-3pt,topsep=-1pt}%
   \setstretch{\itemspread}%
-  {\bfseries#3}, {\itshape \small #4} {\textcolor{lightgrey}{\hrulefill{}}} {#2} \vspace*{3pt}%
+  {\bfseries#3}, {\itshape \small #4} {\textcolor{lightgrey}{\hrulefill{}}} {#2}%
+  \vspace*{-0.7em}\\%
   \ifx&#5&%
   \else{%
     \hspace*{\itemsleftindent}%
@@ -387,12 +450,13 @@
 \newcommand*{\cvhobby}[4][\itemsgap]{%
   \setlist[itemize]{itemsep=-3pt,topsep=-1pt}%
   \setstretch{\itemspread}%
-  {{\bfseries#3} {\textcolor{lightgrey}{\hrulefill{}}} {#2}} \vspace*{3pt}%
+  {\bfseries#3} {\textcolor{lightgrey}{\hrulefill{}}} {#2}%
+  \vspace*{-0.7em}\\%
   \ifx&#4&%
   \else{%
     \hspace*{\itemsleftindent}%
       \small%
-      \vspace*{-3pt}%
+      \vspace{-3pt}%
       \begin{itemize}[label={\textbullet},%
 	before=\vspace{-1pt},%
 	after=\vspace{\itemslistgapafter},%
@@ -448,6 +512,11 @@
   \@ifundefined{@namesuffix}{}{, \@namesuffix}%
 }
 
+\newcommand*{\website}[1]{%
+  \def\@websiteurl{#1}%
+  \homepage{#1}%
+}
+
 \newcommand*{\github}[1]{%
   \def\@githubhandle{#1}%
   \social[github]{#1}% Automatically set \social as well
@@ -460,7 +529,12 @@
 
 \newcommand*{\@printsocials}{%
   \def\@socialsep{}%
+  \@ifundefined{@websiteurl}{}{%
+  {\scriptsize\faGlobe{~~}\url{https://\@websiteurl}}%
+    \def\@socialsep{\quad\textbullet\quad}%
+  }%
   \@ifundefined{@linkedinhandle}{}{%
+    \@socialsep%
     {\scriptsize\faLinkedinIn{~~}\url{https://www.linkedin.com/in/\@linkedinhandle}}%
     \def\@socialsep{\quad\textbullet\quad}%
   }%
@@ -489,13 +563,13 @@
   
   % Center footer even pages (CE): Name, email, and socials
   \fancyfoot[CE]{%
-    \vspace{-23pt}%
+    \vspace{-23pt}\\%
     {\footnotesize{\textsc{\@getfootername}}}%
     \@ifundefined{@email}{}{%
       \quad\textbullet\quad%
       {\footnotesize\textsc{\href{mailto:\@email}{\@email}}}%
     }%
-    \\{\vspace{-2pt}}%
+    \\{\vspace{-4pt}}%
     \@printsocials%
   }
 }
