@@ -1,0 +1,138 @@
+name: Publish a release
+
+# Tag a release to publish it: run dev/scripts/bump-version.sh, write the CHANGELOG
+# entry, commit, then `git tag v1.1.0 && git push origin v1.1.0`. The steps are in
+# dev/RELEASING.md.
+#
+# Pushing to a branch does nothing. This workflow compiles both example documents in a
+# full TeX Live, fails on any error or undefined reference, and attaches to a GitHub
+# release:
+#
+#   Resume.pdf, CoverLetter.pdf    compiled here, from the tagged commit
+#   Resume-ATS-Friendly-<version>.zip
+#                                  the template. What goes in is decided by
+#                                  export-ignore in .gitattributes.
+#   SHA256SUMS                     so a download can be checked
+#
+# The zip is built with `git archive`, so it holds what is committed at the tag and
+# nothing the runner's working directory happens to contain.
+#
+# The release body is this version's CHANGELOG.md section followed by
+# dev/release-notes-tail.md.
+#
+# workflow_dispatch runs everything as a rehearsal and publishes nothing, so a run
+# before the tag exists proves the release would work.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+# Only to attach files to a release. Nothing here can write to a branch.
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Work out the version
+        id: version
+        run: |
+          set -euo pipefail
+
+          # On a tag the tag decides. On workflow_dispatch there is no tag, so the
+          # rehearsal takes the newest CHANGELOG section, which is what is about to ship.
+          if [ "${GITHUB_REF_TYPE:-}" = "tag" ]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="$(sed -n 's/^## \[\([0-9][0-9.]*\)\].*/\1/p' CHANGELOG.md | head -1)"
+          fi
+          case "$version" in
+            [0-9]*.[0-9]*.[0-9]*) ;;
+            *) echo "'$version' is not a three-part version" >&2; exit 1 ;;
+          esac
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "name=Resume-ATS-Friendly-$version" >> "$GITHUB_OUTPUT"
+          echo "Building Resume-ATS-Friendly-$version"
+
+      # Refuses to publish a version the changelog does not describe. The same extractor
+      # that writes the release body, so the gate cannot pass over a section the body
+      # step would then fail to read.
+      - name: The changelog describes this version
+        run: dev/scripts/changelog-section.sh "${{ steps.version.outputs.version }}" > /dev/null
+
+      # The committed PDFs are removed first, so a compile that produced nothing cannot
+      # pass on the strength of the copies already in the repository.
+      - name: Remove the committed PDFs
+        run: rm -f Resume.pdf CoverLetter.pdf
+
+      # latexmk runs pdflatex and biber as many times as the references need, and
+      # -halt-on-error stops on the first error.
+      - name: Compile both documents
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: |
+            Resume.tex
+            CoverLetter.tex
+
+      # A document can compile without error and still print "??" where a reference or a
+      # citation should be. latexmk does not count that as a failure; this does.
+      - name: No undefined references or citations
+        run: |
+          set -euo pipefail
+          for doc in Resume CoverLetter; do
+            [ -s "$doc.pdf" ] || { echo "$doc.pdf was not produced" >&2; exit 1; }
+            if grep -nE "undefined (references|citations)|(Reference|Citation) .* undefined" "$doc.log"; then
+              echo "$doc has undefined references or citations, see above" >&2
+              exit 1
+            fi
+            echo "  ok  $doc.pdf"
+          done
+
+      - name: Build the zip and the checksums
+        env:
+          NAME: ${{ steps.version.outputs.name }}
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          git archive --prefix="${NAME}/" --format=zip -o "out/${NAME}.zip" HEAD
+          unzip -l "out/${NAME}.zip"
+          cp Resume.pdf CoverLetter.pdf out/
+          ( cd out && sha256sum ./* > SHA256SUMS )
+          cat out/SHA256SUMS
+
+      - name: Build the release notes
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          NAME: ${{ steps.version.outputs.name }}
+        run: |
+          set -euo pipefail
+          # Runs on every trigger and not only on a tag, so a rehearsal proves the notes
+          # extract before the tag exists.
+          dev/scripts/changelog-section.sh "$VERSION" > RELEASE_NOTES.md
+          printf '\n' >> RELEASE_NOTES.md
+          sed -e "1,/^-->$/d" -e "s|@VERSION@|${VERSION}|g" -e "s|@NAME@|${NAME}|g" \
+              dev/release-notes-tail.md >> RELEASE_NOTES.md
+          [ -s RELEASE_NOTES.md ] || { echo "the release notes came out empty" >&2; exit 1; }
+          echo "::group::release body"
+          cat RELEASE_NOTES.md
+          echo "::endgroup::"
+
+      - name: Publish the release
+        if: github.ref_type == 'tag'
+        uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            out/Resume.pdf
+            out/CoverLetter.pdf
+            out/${{ steps.version.outputs.name }}.zip
+            out/SHA256SUMS
+          body_path: RELEASE_NOTES.md

@@ -1,0 +1,6 @@
+# What git archive leaves out of the release zip. release.yml builds the zip from the
+# git index, so this file decides what a user downloads.
+dev/            export-ignore
+.github/        export-ignore
+.gitattributes  export-ignore
+.gitignore      export-ignore
