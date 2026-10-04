@@ -1,23 +1,11 @@
-%% drevoresumecv.cls
+%% start of file `drevocv.cls'.
 %% Copyright 2022-2026 Ozan L. Z. Kiratli (ozankiratli@protonmail.com).
 %
 % This work may be distributed and/or modified under the
-% conditions of the LaTeX Project Public License, either version 1.3
-% of this license or (at your option) any later version.
-% The latest version of this license is in
-%   https://www.latex-project.org/lppl.txt
-% and version 1.3c or later is part of all distributions of LaTeX
-% version 2008 or later.
-%
-% This work has the LPPL maintenance status `maintained'.
-%
-% The Current Maintainer of this work is Ozan L. Z. Kiratli.
-%
-% This work consists of the files drevoresumecv.cls and drevocover.cls
-% and the derived files Resume.pdf and CoverLetter.pdf.
+% conditions of the LaTeX Project Public License version 1.3c,
+% available at http://www.latex-project.org/lppl/.
 %
 % This work uses customized snippets from moderncvheadiii and moderncvbodyi
-
 
 %-------------------------------------------------------------------------------
 %-------------------------------------------------------------------------------
@@ -122,7 +110,7 @@
 \setlength{\itemsrightindent}{0pt}
 
 \newlength{\itemsrightcorrection}
-\setlength{\itemsrightcorrection}{1.45693pt}
+\setlength{\itemsrightcorrection}{0pt}
 
 \newlength{\itemslistgapbefore}
 \setlength{\itemslistgapbefore}{3pt}
@@ -364,7 +352,10 @@
 \newcommand*{\cvexperience}[7][\itemsgap]{%
   \setlist[itemize]{itemsep=-1pt,topsep=1pt}%
   {\bfseries #3} {\textcolor{lightgrey}{\hrulefill{}}} {#2}\\%
-  {\small #4}, {\itshape \small #5}{\hfill #6}%
+  \ifx&#4&%
+  \else{%
+    {\small #4},}\fi {\itshape \small #5}{\hfill #6}\\%
+  \vspace{-1em}%
   \ifx&#7&%
   \else{%
     \small%
@@ -462,9 +453,12 @@
 \newcommand*{\cvhobby}[4][\itemsgap]{%
   \setlist[itemize]{itemsep=-3pt,topsep=-1pt}%
   \setstretch{\itemspread}%
-  {\bfseries#3} {\textcolor{lightgrey}{\hrulefill{}}} {#2}%
+  %{\bfseries#3} {\textcolor{lightgrey}{\hrulefill{}}} {#2}%
+  {#3} {\textcolor{lightgrey}{\hrulefill{}}} {#2}%
   \vspace*{-0.7em}\\%
-  \ifx&#4&%
+  \ifx&#4&{
+    \hspace*{\itemsleftindent}\vspace*{-1em}%
+    }%
   \else{%
     \hspace*{\itemsleftindent}%
       \small%
