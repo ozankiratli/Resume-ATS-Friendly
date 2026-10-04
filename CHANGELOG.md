@@ -14,6 +14,18 @@ A version moves when something changes, never on a schedule.
 
 ---
 
+## [1.0.1] - 2026-10-04
+
+Small edits that resolve minor compiling problems and alignment issues.
+
+### Commits
+
+- (8e79ef6) Minor fixes on the line ordering
+- (db857d1) Releasing automation
+- (1eb6b96) Releasing automation script
+
+---
+
 ## [1.0.0] - 2026-03-26
 
 **The first stable release of the drevo LaTeX resume and cover letter classes.** Two document classes built on `moderncv` that share one header, so a resume and its cover letter match.
@@ -57,4 +69,5 @@ A version moves when something changes, never on a schedule.
 
 ---
 
+[1.0.1]: https://github.com/ozankiratli/Resume-ATS-Friendly/releases/tag/v1.0.1
 [1.0.0]: https://github.com/ozankiratli/Resume-ATS-Friendly/releases/tag/v1.0.0
