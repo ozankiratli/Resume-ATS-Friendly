@@ -76,6 +76,8 @@
 \DeclareRobustCommand{\lseries}{\fontseries{l}\selectfont}
 \DeclareTextFontCommand{\textl}{\lseries}
 
+\definecolor{iconcolor}{rgb}{0.45, 0.45, 0.45}
+
 \renewcommand*{\bibfont}{\small}
 
 \renewcommand*{\namefont}{\huge\bfseries\upshape}
@@ -90,7 +92,8 @@
 \renewcommand*{\titlestyle}[1]{{\titlefont\textcolor{color2!85}{#1}}}
 \renewcommand*{\addressstyle}[1]{{\addressfont\textcolor{color2}{#1}}}
 \renewcommand*{\quotestyle}[1]{{\quotefont\textcolor{color1}{#1}}}
-\renewcommand*{\addresssymbol}{{{\color[HTML]{909090}\small\faHome}}~}
+% moderncv 2.6 loads fontawesome6, \faHouse; v 2.5.1 loads fontawesome5, \faHome.
+\renewcommand*{\addresssymbol}{{{\color{iconcolor}\small\ifdefined\faHouse\faHouse\else\faHome\fi}}~}
 
 \definecolor{lightgrey}{RGB}{192,192,192}
 
@@ -536,17 +539,17 @@
 \newcommand*{\@printsocials}{%
   \def\@socialsep{}%
   \@ifundefined{@websiteurl}{}{%
-  {\scriptsize\faGlobe{~~}\url{https://\@websiteurl}}%
+  {\scriptsize{\color{iconcolor}\faGlobe}{~~}\url{https://\@websiteurl}}%
     \def\@socialsep{\quad\textbullet\quad}%
   }%
   \@ifundefined{@linkedinhandle}{}{%
     \@socialsep%
-    {\scriptsize\faLinkedinIn{~~}\url{https://www.linkedin.com/in/\@linkedinhandle}}%
+    {\scriptsize{\color{iconcolor}\faLinkedinIn}{~~}\url{https://www.linkedin.com/in/\@linkedinhandle}}%
     \def\@socialsep{\quad\textbullet\quad}%
   }%
   \@ifundefined{@githubhandle}{}{%
     \@socialsep%
-    {\scriptsize\faGithub{~~}\url{https://www.github.com/\@githubhandle}}%
+    {\scriptsize{\color{iconcolor}\faGithub}{~~}\url{https://www.github.com/\@githubhandle}}%
   }%
 }
 

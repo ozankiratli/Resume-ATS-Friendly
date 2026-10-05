@@ -58,6 +58,8 @@
 \DeclareRobustCommand{\lseries}{\fontseries{l}\selectfont}
 \DeclareTextFontCommand{\textl}{\lseries}
 
+\definecolor{iconcolor}{rgb}{0.45, 0.45, 0.45}
+
 \renewcommand*{\namefont}{\huge\bfseries\upshape}
 \renewcommand*{\titlefont}{\LARGE\mdseries\scshape}
 \renewcommand*{\addressfont}{\small\mdseries\upshape}
@@ -70,7 +72,8 @@
 \renewcommand*{\titlestyle}[1]{{\titlefont\textcolor{color2!85}{#1}}}
 \renewcommand*{\addressstyle}[1]{{\addressfont\textcolor{color2}{#1}}}
 \renewcommand*{\quotestyle}[1]{{\quotefont\textcolor{color1}{#1}}}
-\renewcommand*{\addresssymbol}{{{\color[HTML]{909090}\small\faHome}}~}
+% moderncv 2.6 loads fontawesome6, \faHouse; < 2.5.1 loads fontawesome5, \faHome.
+\renewcommand*{\addresssymbol}{{{\color{iconcolor}\small\ifdefined\faHouse\faHouse\else\faHome\fi}}~}
 
 \definecolor{lightgrey}{RGB}{192,192,192}
 

@@ -35,15 +35,13 @@ All of these are included in a standard **TeX Live** or **MiKTeX** installation.
 
 ### Recommended Compiler
 
-```
-lualatex  →  biber  →  lualatex  →  lualatex
-```
-
-Or with `pdflatex`:
+`pdflatex`:
 
 ```
 pdflatex  →  biber  →  pdflatex  →  pdflatex
 ```
+
+`lualatex` does not compile correctly. 
 
 ---
 
@@ -435,6 +433,22 @@ Override these lengths in your preamble after `\documentclass`:
 \removeonelinespace % Remove 1em of vertical space (fine-tuning)
 \CPP               % Pretty-print C++ in text
 ```
+
+### Icon Color
+
+The address icon in the header and the icons in the resume's footer are drawn in `iconcolor`, a gray (`rgb 0.45`) that matches the color moderncv 2.4 and later give the other header icons: phone, email, website and social links. To change it, set it in your preamble, after `\documentclass`:
+
+```latex
+\definecolor{iconcolor}{rgb}{0.45, 0.45, 0.45}
+```
+
+Older moderncv, such as the 2.3.1 in Ubuntu 24.04's TeX Live, draws the phone, email, website and social icons in the text color, black, and the classes leave those icons to moderncv. The address and footer icons then come out gray next to black ones. To make them match, set `iconcolor` to black:
+
+```latex
+\definecolor{iconcolor}{rgb}{0, 0, 0}
+```
+
+The log of any compile shows which moderncv you have, on the line that begins `Document Class: moderncv`.
 
 ---
 
