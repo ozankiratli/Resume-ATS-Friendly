@@ -7,7 +7,8 @@
 # This project has no VERSION file. A version is its CHANGELOG section and its tag, and
 # release.yml refuses a tag the CHANGELOG has no section for. This prepends that section,
 # listing every commit since the last release tag under a "### Commits" heading, and adds
-# the matching reference-link definition at the foot of the file.
+# the matching reference-link definition at the foot of the file. It also points the
+# README's version badge at the new version.
 #
 # Does not commit, tag or push. It prints those commands for you.
 #
@@ -34,6 +35,23 @@ CURRENT="$(sed -n 's/^## \[\([0-9][0-9.]*\)\].*/\1/p' "$LOG" | head -1)"
 grep -qF "## [$NEW]" "$LOG" && { echo "ERROR: $LOG already has a [$NEW] section" >&2; exit 1; }
 git rev-parse -q --verify "refs/tags/v$NEW" > /dev/null && {
     echo "ERROR: tag v$NEW already exists" >&2; exit 1; }
+
+# The README's version badge: the shields.io image and the link to that version's
+# release, on one line. Checked before anything is written, so a README whose badge has
+# gone or changed shape stops the bump instead of leaving the CHANGELOG changed without
+# it. Whatever version the badge shows is replaced, not only the current one.
+README="README.md"
+BADGE='^\[!\[Version\]'
+[ -f "$README" ] || { echo "ERROR: $README not found in $ROOT" >&2; exit 1; }
+nbadge="$(grep -cE "$BADGE" "$README" || true)"
+[ "$nbadge" -eq 1 ] || {
+    echo "ERROR: $README should have one version badge line, starting [![Version], and has $nbadge" >&2; exit 1; }
+grep -E "$BADGE" "$README" \
+    | grep -qE 'badge/version-v[0-9]+\.[0-9]+\.[0-9]+-.*/releases/tag/v[0-9]+\.[0-9]+\.[0-9]+\)' || {
+    echo "ERROR: $README's version badge is not in the form this script updates:" >&2
+    grep -E "$BADGE" "$README" >&2
+    exit 1
+}
 
 # Everything since the most recent tag, or the whole history for a first release.
 LAST_TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
@@ -83,8 +101,16 @@ else
     printf '\n%s\n' "$LINK" >> "$LOG"
 fi
 
+sed -i -E "/$BADGE/ {
+    s#badge/version-v[0-9]+\.[0-9]+\.[0-9]+-#badge/version-v$NEW-#
+    s#/releases/tag/v[0-9]+\.[0-9]+\.[0-9]+\)#/releases/tag/v$NEW)#
+}" "$README"
+grep -qF "badge/version-v$NEW-" "$README" && grep -qF "/releases/tag/v$NEW)" "$README" || {
+    echo "ERROR: $README's version badge did not take v$NEW; $LOG has been changed already" >&2; exit 1; }
+
 echo "${CURRENT:-none} -> $NEW"
 echo "  $LOG : $(printf '%s\n' "$COMMITS" | wc -l) commits since ${LAST_TAG:-the start}, link definition added"
+echo "  $README    : version badge points at v$NEW"
 echo
 echo "Write this version's notes into $LOG, above its '### Commits' heading,"
 echo "and check they extract: dev/scripts/changelog-section.sh $NEW"

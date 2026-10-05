@@ -14,15 +14,17 @@ A version moves when something changes, never on a schedule.
 
 ---
 
-## [1.0.1] - 2026-10-04
+## [1.0.1] - 2026-10-05
 
-Small edits that resolve minor compiling problems and alignment issues.
+Small edits that resolve minor compiling problems and alignment issues. Release issues are resolved. 
 
 ### Commits
 
 - (8e79ef6) Minor fixes on the line ordering
 - (db857d1) Releasing automation
 - (1eb6b96) Releasing automation script
+- (2eb0055) Version bump 1.0.1
+- (6b3d8e7) Fixes on release and few minor issues
 
 ---
 
