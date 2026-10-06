@@ -18,7 +18,8 @@
 #                  minutes per environment. Base images are kept; when a pull brings a
 #                  newer one, the copy it replaces is removed unless something else uses
 #                  it. Ctrl-C removes the running container and stops the run.
-#   --out <dir>    Keep the PDFs and logs there, one directory per engine. With --env,
+#   --out <dir>    Keep the PDFs and logs there, one directory per engine, and summary.md:
+#                  the results table, then every failed check with what it printed. With --env,
 #                  one directory per environment, each holding one per engine and the TeX
 #                  Live installation's output in setup.log. What an earlier run left
 #                  there is removed first.
@@ -118,8 +119,17 @@ install_texlive() {
             ;;
         pacman)
             # Arch's packages: the current TeX Live release, without the CTAN updates
-            # since.
-            pacman -Syu --noconfirm --needed \
+            # since. A few working mirrors are chosen first, so one that is down, behind,
+            # or serving a bad certificate does not fail the run: reflector rates the ten
+            # most recently synchronized HTTPS mirrors with one short download each, ten
+            # at a time, and keeps the three fastest that answered. pacman falls back
+            # through them in order. reflector itself comes from the image's own mirror,
+            # just before the full upgrade from the chosen ones.
+            pacman -Sy --noconfirm --needed reflector \
+                && reflector --protocol https --latest 10 --fastest 3 --threads 10 \
+                       --connection-timeout 5 --download-timeout 5 \
+                       --save /etc/pacman.d/mirrorlist \
+                && pacman -Syu --noconfirm --needed \
                 texlive-basic texlive-latex texlive-latexrecommended texlive-latexextra \
                 texlive-fontsrecommended texlive-fontsextra \
                 texlive-pictures texlive-plaingeneric texlive-bibtexextra \
@@ -128,10 +138,24 @@ install_texlive() {
         ctan)
             # The texlive/texlive image, rebuilt weekly. The update brings it to today's
             # packages, which is what a MiKTeX user, or a TeX Live user who runs tlmgr
-            # update, has. Across a TeX Live year change tlmgr refuses to update the older
-            # year, so this fails until the image moves to the new one.
-            tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet \
-                && tlmgr update --self --all
+            # update, has. CTAN's forwarder, mirror.ctan.org, sends each request to a
+            # mirror of its choosing, and some are broken at any time: in October 2026 one
+            # served an expired certificate and another an incomplete chain. So when the
+            # update fails through the forwarder, it is tried from named mirrors, which
+            # were reachable and current when they were chosen: MIT in the US and FAU in
+            # Germany, on separate networks. One that breaks later is passed over, and is
+            # replaced here. A mirror behind the image is refused by tlmgr itself, and
+            # the next one is tried. Across a TeX Live year change tlmgr refuses to
+            # update the older year from any of them, so this fails until the image
+            # moves to the new one.
+            local repo
+            for repo in https://mirror.ctan.org/systems/texlive/tlnet \
+                        https://mirrors.mit.edu/CTAN/systems/texlive/tlnet \
+                        https://ftp.fau.de/ctan/systems/texlive/tlnet; do
+                echo "tlmgr: updating from $repo"
+                tlmgr option repository "$repo" && tlmgr update --self --all && return 0
+            done
+            return 1
             ;;
         *)
             echo "no way to install TeX Live is called $1" >&2
@@ -144,8 +168,10 @@ install_texlive() {
 # mistaken for a suite that ran and failed.
 INSTALL_FAILED=90
 
-# The files a run leaves in an output directory. Removed before a run writes there, so
-# a file it did not write cannot pass for one it did.
+# The files the suite leaves in an output directory. Removed before it writes there, so
+# a file it did not write cannot pass for one it did. Not setup.log: inside a container
+# the install has just written it when the suite starts, so --env clears that one
+# itself, before the container is created.
 clear_outputs() {
     local engine doc
     for engine in $ENGINES; do
@@ -154,7 +180,7 @@ clear_outputs() {
                 "$1/$engine/$doc.blg" "$1/$engine/$doc.latexmk.txt"
         done
     done
-    rm -f -- "$1/summary.md" "$1/setup.log"
+    rm -f -- "$1/summary.md"
 }
 
 OUT=""
@@ -295,6 +321,7 @@ if [ -n "$ENVS" ]; then
         # earlier run is left to pass for this one.
         mkdir -p "$dest"
         clear_outputs "$dest"
+        rm -f -- "$dest/setup.log"
         WHY[$name]="the run stopped before it wrote one"
         echo
         echo "=== $TITLE ($name)"
@@ -458,11 +485,18 @@ done
 
 PASSED=0
 FAILED=0
+# A failed check is printed and also written to the document's report, REPORT, which
+# summary.md carries, so the reasons are still there after the terminal has scrolled
+# past them. detail() is for what a failed check prints under its FAIL line.
 pass()      { echo "  ok    $1"; PASSED=$((PASSED + 1)); }
-fail()      { echo "  FAIL  $1"; FAILED=$((FAILED + 1)); }
-unchecked() { echo "  FAIL  $1 -- could not check: $2"; FAILED=$((FAILED + 1)); }
+fail()      { echo "  FAIL  $1"; FAILED=$((FAILED + 1)); echo "FAIL  $1" >> "$REPORT"; }
+unchecked() {
+    echo "  FAIL  $1 -- could not check: $2"; FAILED=$((FAILED + 1))
+    echo "FAIL  $1 -- could not check: $2" >> "$REPORT"
+}
 note()      { echo "        $1"; }
 indent()    { sed 's/^/          /'; }
+detail()    { sed 's/^/    /' | tee -a "$REPORT" | sed 's/^/      /'; }
 
 # latexmk's option for each engine.
 engine_flag() {
@@ -515,6 +549,7 @@ echo "latexmk:  $(latexmk -v 2>/dev/null | grep -m1 -oE 'Version [^ ]+' || echo 
 echo "biber:    $(biber --version 2>/dev/null | head -n 1)"
 
 SUMMARY=""
+FAILURES=""
 for engine in $ENGINES; do
     cd "$WORK/$engine"
     for doc in "${DOCS[@]}"; do
@@ -522,6 +557,8 @@ for engine in $ENGINES; do
         echo "$doc, $engine"
         log="$doc.log"
         before=$FAILED
+        REPORT="$doc.report.txt"
+        : > "$REPORT"
 
         # max_print_line stops TeX from wrapping its log at 79 columns, which would split
         # a long file name from the line number of the error in it.
@@ -559,12 +596,12 @@ for engine in $ENGINES; do
             else
                 fail "no errors -- $nerr in the log:"
                 errors_in "$log" > errors.txt
-                head -n 60 errors.txt | indent
+                head -n 60 errors.txt | detail
                 if [ "$(wc -l < errors.txt)" -gt 60 ]; then
-                    note "  ... the rest is in the log, which --out keeps as $engine/$log"
+                    echo "... the rest is in the log, which --out keeps as $engine/$log" | detail
                 fi
                 if grep -qE "File \`[^']+' not found" "$log"; then
-                    note "  a file is missing from this TeX installation, not from the template"
+                    echo "a file is missing from this TeX installation, not from the template" | detail
                 fi
             fi
         fi
@@ -574,7 +611,7 @@ for engine in $ENGINES; do
             pass "latexmk finished cleanly"
         else
             fail "latexmk finished cleanly -- exit status $status"
-            sed -n '/^Collected error summary/,$p' "$doc.latexmk.txt" | indent
+            sed -n '/^Collected error summary/,$p' "$doc.latexmk.txt" | detail
         fi
 
         pages="-"
@@ -594,7 +631,7 @@ for engine in $ENGINES; do
             unchecked "no undefined references or citations" "$why"
         elif grep -nE 'undefined (references|citations)|(Reference|Citation) .* undefined' "$log" > undefined.txt; then
             fail "no undefined references or citations:"
-            indent < undefined.txt
+            detail < undefined.txt
         else
             pass "no undefined references or citations"
         fi
@@ -605,7 +642,7 @@ for engine in $ENGINES; do
                     unchecked "no biber errors" "biber never ran"
                 elif grep -E 'ERROR - ' "$doc.blg" > biber.txt; then
                     fail "no biber errors:"
-                    indent < biber.txt
+                    detail < biber.txt
                 else
                     pass "no biber errors"
                     if grep -E 'WARN - ' "$doc.blg" > biber.txt; then
@@ -626,7 +663,7 @@ for engine in $ENGINES; do
                 /^Class drevo(resumecv|cover) Warning/ { print; more = 1; next; }
                 more && /^\(drevo(resumecv|cover)\)/ { print; next; }
                 { more = 0; }
-            ' "$log" | indent
+            ' "$log" | detail
         else
             pass "no warnings from our classes"
         fi
@@ -646,13 +683,17 @@ for engine in $ENGINES; do
         fi
 
         result="pass"
-        if [ "$FAILED" -gt "$before" ]; then result="FAIL"; fi
+        if [ "$FAILED" -gt "$before" ]; then
+            result="FAIL"
+            FAILURES+="#### $doc, $engine"$'\n\n''```'$'\n'"$(cat "$REPORT")"$'\n''```'$'\n\n'
+        fi
         SUMMARY+="| $doc | $engine | $result | $pages | $nerr | $nwarn | ${versions:--} |"$'\n'
     done
 done
 
 # One table per run, printed at the end of an --env run so the environments can be read
-# side by side.
+# side by side. Below it, every failed check with what it printed, so the reasons are in
+# summary.md and not only in a terminal that has scrolled away.
 SUMMARY_MD="$(
     echo "### ${SUITE_NAME:-This machine}"
     echo
@@ -660,6 +701,12 @@ SUMMARY_MD="$(
     echo "| Document | Engine | Result | Pages | Errors | Other warnings | Loaded |"
     echo "|---|---|---|---|---|---|---|"
     printf '%s' "$SUMMARY"
+    if [ -n "$FAILURES" ]; then
+        echo
+        echo "**What failed**"
+        echo
+        printf '%s' "$FAILURES"
+    fi
 )"
 
 if [ -n "$OUT" ]; then

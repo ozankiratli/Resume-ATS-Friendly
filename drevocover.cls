@@ -58,7 +58,9 @@
 \DeclareRobustCommand{\lseries}{\fontseries{l}\selectfont}
 \DeclareTextFontCommand{\textl}{\lseries}
 
-\definecolor{iconcolor}{rgb}{0.45, 0.45, 0.45}
+%\definecolor{iconcolor}{rgb}{0.45, 0.45, 0.45}
+\@ifundefined{\string\color@default-socialicon-color}{\definecolor{default-socialicon-color}{HTML}{000000}}{}
+\colorlet{iconcolor}{default-socialicon-color}
 
 \renewcommand*{\namefont}{\huge\bfseries\upshape}
 \renewcommand*{\titlefont}{\LARGE\mdseries\scshape}
