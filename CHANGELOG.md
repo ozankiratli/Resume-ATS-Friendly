@@ -14,6 +14,16 @@ A version moves when something changes, never on a schedule.
 
 ---
 
+## [1.0.2] - 2026-10-05
+
+Minor update to prevent address symbol color drift
+
+### Commits
+
+- (c92e649) address icon color fix is in, test suite is repaired
+
+---
+
 ## [1.0.1] - 2026-10-05
 
 Small edits that resolve minor compiling problems and alignment issues. Release issues are resolved. 
@@ -71,5 +81,6 @@ Small edits that resolve minor compiling problems and alignment issues. Release 
 
 ---
 
+[1.0.2]: https://github.com/ozankiratli/Resume-ATS-Friendly/releases/tag/v1.0.2
 [1.0.1]: https://github.com/ozankiratli/Resume-ATS-Friendly/releases/tag/v1.0.1
 [1.0.0]: https://github.com/ozankiratli/Resume-ATS-Friendly/releases/tag/v1.0.0

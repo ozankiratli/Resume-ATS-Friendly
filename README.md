@@ -1,7 +1,7 @@
 # drevo — ATS-Friendly LaTeX Resume & Cover Letter
 
 [![License: LPPL 1.3c](https://img.shields.io/badge/License-LPPL%201.3c-blue.svg)](http://www.latex-project.org/lppl/)
-[![Version](https://img.shields.io/badge/version-v1.0.1-green.svg)](https://github.com/ozankiratli/Resume-ATS-Friendly/releases/tag/v1.0.1)
+[![Version](https://img.shields.io/badge/version-v1.0.2-green.svg)](https://github.com/ozankiratli/Resume-ATS-Friendly/releases/tag/v1.0.2)
 
 A modern, ATS-friendly LaTeX document class for resumes/CVs and cover letters, built on top of [moderncv](https://ctan.org/pkg/moderncv). Designed to maximize readability by Applicant Tracking Systems while still producing a clean, professional-looking document.
 
